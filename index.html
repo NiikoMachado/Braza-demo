@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRASA · Cocina & Encuentro</title>
+  <meta name="description" content="Demo profesional de restaurante con carta interactiva, pedidos por WhatsApp, delivery, retiro y reservas online.">
+  <meta name="theme-color" content="#111111">
+  <meta property="og:title" content="BRASA · Cocina & Encuentro">
+  <meta property="og:description" content="Sabores al fuego, buenos encuentros y una experiencia pensada hasta el último detalle.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1663530761401-15eefb544889?auto=format&fit=crop&w=1200&q=85">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { warm: '#FAFAF8', ink: '#111111', charcoal: '#2A2A2A', gold: '#B8976A', sand: '#E8DED0' },
+        fontFamily: { display: ['Cormorant Garamond','serif'], sans: ['Inter','sans-serif'] },
+        boxShadow: { soft: '0 20px 60px rgba(17,17,17,.10)' }
+      }}
+    };
+  </script>
+  <style>
+    :root{--warm:#FAFAF8;--ink:#111111;--charcoal:#2A2A2A;--gold:#B8976A;--sand:#E8DED0}
+    *{box-sizing:border-box} body{background:var(--warm);color:var(--ink);font-family:Inter,sans-serif}
+    body.locked{overflow:hidden}.font-display{font-family:'Cormorant Garamond',serif}
+    ::selection{background:#b8976a;color:#fff}
+    ::-webkit-scrollbar{width:9px;height:7px}::-webkit-scrollbar-track{background:#eee}::-webkit-scrollbar-thumb{background:#b8976a;border-radius:99px}
+    .nav-solid{background:rgba(17,17,17,.94);backdrop-filter:blur(18px);box-shadow:0 8px 30px rgba(0,0,0,.18)}
+    .hero-overlay{background:linear-gradient(90deg,rgba(9,9,9,.88) 0%,rgba(9,9,9,.60) 52%,rgba(9,9,9,.28) 100%),linear-gradient(0deg,rgba(0,0,0,.55),transparent 40%)}
+    .gold-line{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+    .btn-arrow svg{transition:transform .3s ease}.btn-arrow:hover svg{transform:translateX(5px)}
+    .reveal,.reveal-left,.reveal-right{opacity:0;transition:opacity .7s ease-out,transform .7s ease-out}
+    .reveal{transform:translateY(28px)}.reveal-left{transform:translateX(-28px)}.reveal-right{transform:translateX(28px)}
+    .revealed{opacity:1;transform:none}
+    .menu-card{transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease}.menu-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 24px 54px rgba(17,17,17,.12)}
+    .menu-card img,.story-photo{transition:transform .65s ease}.menu-card:hover img,.story-wrap:hover .story-photo{transform:scale(1.055)}
+    .tab-btn{position:relative;white-space:nowrap}.tab-btn:after{content:'';position:absolute;left:0;right:0;bottom:-9px;height:2px;background:var(--gold);transform:scaleX(0);transition:transform .3s ease}.tab-btn[aria-selected="true"]:after{transform:scaleX(1)}
+    .nav-link{position:relative}.nav-link:after{content:'';position:absolute;left:0;right:100%;bottom:-5px;height:1px;background:var(--gold);transition:right .3s ease}.nav-link:hover:after,.nav-link.active:after{right:0}
+    .field{width:100%;border:1px solid #d9d5cf;background:#fff;padding:.85rem 1rem;outline:none;transition:border-color .2s,box-shadow .2s}.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,151,106,.18)}
+    .field.error{border-color:#b91c1c}.error-text{min-height:1rem;color:#b91c1c;font-size:.75rem;margin-top:.25rem}
+    .drawer{transform:translateX(100%);transition:transform .4s cubic-bezier(.22,.8,.24,1)}.drawer.open{transform:translateX(0)}
+    .overlay{opacity:0;pointer-events:none;transition:opacity .3s ease}.overlay.open{opacity:1;pointer-events:auto}
+    .toast{transform:translate(-50%,120%);opacity:0;transition:transform .35s ease,opacity .35s ease}.toast.show{transform:translate(-50%,0);opacity:1}
+    .pulse-soft{animation:pulseSoft 2.6s infinite}.scroll-dot{animation:scrollDot 1.8s infinite}
+    @keyframes pulseSoft{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.34)}50%{box-shadow:0 0 0 14px rgba(37,211,102,0)}}
+    @keyframes scrollDot{0%{transform:translateY(0);opacity:0}25%{opacity:1}75%{opacity:1}100%{transform:translateY(14px);opacity:0}}
+    details summary::-webkit-details-marker{display:none}details[open] .faq-plus{transform:rotate(45deg)}
+    .dish-enter{animation:dishIn .45s ease both}@keyframes dishIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    :focus-visible{outline:3px solid #d9b787;outline-offset:4px}
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition-duration:.01ms!important}.reveal,.reveal-left,.reveal-right{opacity:1;transform:none}}
+  </style>
+</head>
+<body class="antialiased overflow-x-hidden">
+  <a href="#contenido" class="fixed left-4 top-4 z-[100] -translate-y-24 bg-gold px-4 py-3 font-semibold text-white focus:translate-y-0">Saltar al contenido</a>
+
+  <header id="navbar" class="fixed inset-x-0 top-0 z-50 text-white transition-all duration-300">
+    <nav class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8" aria-label="Navegación principal">
+      <a href="#inicio" class="group flex items-center gap-3" aria-label="BRASA, ir al inicio">
+        <span class="grid h-10 w-10 place-items-center border border-gold font-display text-2xl font-bold text-gold">B</span>
+        <span><strong class="block font-display text-2xl leading-none tracking-[.18em]">BRASA</strong><small class="text-[9px] uppercase tracking-[.28em] text-white/60">Cocina & Encuentro</small></span>
+      </a>
+      <div class="hidden items-center gap-7 lg:flex">
+        <a class="nav-link text-xs font-semibold uppercase tracking-[.15em]" href="#historia">Historia</a>
+        <a class="nav-link text-xs font-semibold uppercase tracking-[.15em]" href="#menu">Menú</a>
+        <a class="nav-link text-xs font-semibold uppercase tracking-[.15em]" href="#promos">Promos</a>
+        <a class="nav-link text-xs font-semibold uppercase tracking-[.15em]" href="#eventos">Eventos</a>
+        <a class="nav-link text-xs font-semibold uppercase tracking-[.15em]" href="#reservas">Reservas</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <button data-cart-open class="relative grid h-11 min-w-11 place-items-center border border-white/25 px-3 transition hover:border-gold hover:text-gold" aria-label="Abrir carrito">
+          <svg width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+          <span data-cart-count class="absolute -right-2 -top-2 hidden min-w-5 rounded-full bg-gold px-1 text-center text-[11px] font-bold leading-5 text-white">0</span>
+        </button>
+        <a href="#reservas" class="hidden bg-gold px-5 py-3 text-xs font-bold uppercase tracking-[.16em] text-white transition hover:bg-white hover:text-ink sm:block">Reservar</a>
+        <button id="menuToggle" class="grid h-11 w-11 place-items-center border border-white/25 lg:hidden" aria-label="Abrir menú" aria-controls="mobileMenu" aria-expanded="false">
+          <span class="space-y-1.5"><span class="block h-px w-5 bg-current"></span><span class="block h-px w-5 bg-current"></span><span class="block h-px w-5 bg-current"></span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <div id="mobileMenu" class="fixed inset-0 z-40 flex translate-x-full flex-col items-center justify-center gap-7 bg-ink text-white transition-transform duration-500 lg:hidden" aria-hidden="true">
+    <span class="font-display text-5xl text-gold">BRASA</span>
+    <a class="mobile-link font-display text-3xl" href="#historia">Nuestra historia</a><a class="mobile-link font-display text-3xl" href="#menu">La carta</a><a class="mobile-link font-display text-3xl" href="#promos">Promociones</a><a class="mobile-link font-display text-3xl" href="#eventos">Eventos</a><a class="mobile-link font-display text-3xl" href="#reservas">Reservar</a>
+  </div>
+
+  <main id="contenido">
+    <section id="inicio" class="relative min-h-[760px] h-screen overflow-hidden bg-ink text-white">
+      <img src="https://images.unsplash.com/photo-1663530761401-15eefb544889?auto=format&fit=crop&fm=jpg&q=85&w=2000" alt="Plato de carne a la parrilla presentado por un chef" width="2000" height="1333" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover object-center">
+      <div class="hero-overlay absolute inset-0"></div>
+      <div class="relative z-10 mx-auto flex h-full max-w-7xl items-center px-5 pt-20 lg:px-8">
+        <div class="max-w-3xl">
+          <div class="mb-7 flex items-center gap-4 opacity-0 [animation:dishIn_.7s_.15s_ease_forwards]"><span class="h-px w-12 bg-gold"></span><span class="text-[11px] font-semibold uppercase tracking-[.3em] text-gold">Cocina al fuego · Montevideo</span></div>
+          <h1 class="font-display text-6xl font-semibold leading-[.88] opacity-0 [animation:dishIn_.8s_.3s_ease_forwards] sm:text-7xl lg:text-[7.6rem]">El fuego reúne.<br><em class="font-medium text-gold">El sabor queda.</em></h1>
+          <p class="mt-7 max-w-2xl text-base leading-7 text-white/80 opacity-0 [animation:dishIn_.8s_.5s_ease_forwards] sm:text-lg">Una cocina honesta y contemporánea para compartir sin apuro. Ingredientes cercanos, brasas encendidas y una mesa siempre lista para recibirte.</p>
+          <div class="mt-9 flex flex-col gap-3 opacity-0 [animation:dishIn_.8s_.7s_ease_forwards] sm:flex-row">
+            <button data-cart-open class="btn-arrow inline-flex items-center justify-center gap-3 bg-gold px-7 py-4 text-sm font-bold uppercase tracking-[.14em] transition hover:-translate-y-1 hover:bg-white hover:text-ink">Pedir ahora <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            <a href="#reservas" class="btn-arrow inline-flex items-center justify-center gap-3 border border-white/70 px-7 py-4 text-sm font-bold uppercase tracking-[.14em] transition hover:-translate-y-1 hover:bg-white hover:text-ink">Hacer reserva <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+          </div>
+          <div class="mt-9 flex flex-wrap items-center gap-x-7 gap-y-3 text-xs text-white/65 opacity-0 [animation:dishIn_.8s_.9s_ease_forwards]"><span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-green-400"></span><strong id="heroStatus" class="text-white">Consultando horario…</strong></span><span>Retiro o delivery</span><span>Confirmación por WhatsApp</span></div>
+        </div>
+      </div>
+      <a href="#historia" class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-center text-[10px] uppercase tracking-[.24em] text-white/60" aria-label="Descubrir más"><span class="mb-2 block">Descubrí</span><span class="mx-auto block h-9 w-5 rounded-full border border-white/40 p-1"><span class="scroll-dot mx-auto block h-1.5 w-1.5 rounded-full bg-gold"></span></span></a>
+    </section>
+
+    <section class="bg-ink py-4 text-white" aria-label="Beneficios"><div class="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-white/10 px-5 text-center sm:grid-cols-4 lg:px-8"><div class="p-4"><strong class="block font-display text-2xl text-gold">30–45 min</strong><span class="text-[10px] uppercase tracking-widest text-white/60">Entrega estimada</span></div><div class="p-4"><strong class="block font-display text-2xl text-gold">$ 1.800</strong><span class="text-[10px] uppercase tracking-widest text-white/60">Envío gratis desde</span></div><div class="p-4"><strong class="block font-display text-2xl text-gold">100%</strong><span class="text-[10px] uppercase tracking-widest text-white/60">Pedido confirmado</span></div><div class="p-4"><strong class="block font-display text-2xl text-gold">Mar–Dom</strong><span class="text-[10px] uppercase tracking-widest text-white/60">Mediodía y noche</span></div></div></section>
+
+    <section id="historia" class="py-24 lg:py-32">
+      <div class="mx-auto grid max-w-7xl gap-16 px-5 lg:grid-cols-[.88fr_1.12fr] lg:items-center lg:px-8">
+        <div class="reveal-left">
+          <p class="mb-4 text-[11px] font-bold uppercase tracking-[.28em] text-gold">Nuestra historia</p>
+          <h2 class="font-display text-5xl font-semibold leading-none sm:text-6xl">Una mesa con<br><em class="font-medium text-gold">alma de barrio.</em></h2>
+          <div class="my-7 h-px w-20 bg-gold"></div>
+          <div class="space-y-5 text-[15px] leading-7 text-black/65"><p>BRASA nació alrededor de una mesa familiar: de esas donde siempre cabe alguien más. Convertimos ese espíritu en una cocina abierta, cálida y sin pretensiones, pero obsesionada con cada detalle.</p><p>Nuestra carta combina técnicas contemporáneas con el sabor directo del fuego. Elegimos cortes, vegetales e ingredientes de estación de productores cercanos para que cada plato tenga origen, carácter y frescura.</p><p>El resultado es un lugar para celebrar, almorzar sin prisa o compartir una hamburguesa memorable. Buena música, servicio cercano y la sensación de estar exactamente donde querías estar.</p></div>
+          <blockquote class="mt-8 border-l-2 border-gold pl-5 font-display text-2xl italic leading-snug text-charcoal">“Cocinar es cuidar: el producto, el fuego y a quien se sienta a la mesa.”<cite class="mt-3 block font-sans text-[10px] font-bold not-italic uppercase tracking-[.2em] text-gold">Martín Costa · Chef ejecutivo</cite></blockquote>
+        </div>
+        <div class="grid h-[560px] grid-cols-5 grid-rows-6 gap-3 reveal-right">
+          <div class="story-wrap col-span-3 row-span-4 overflow-hidden"><img class="story-photo h-full w-full object-cover" src="https://images.unsplash.com/photo-1709548145082-04d0cde481d4?auto=format&fit=crop&fm=jpg&q=82&w=900" alt="Interior cálido de restaurante" width="900" height="1200" loading="lazy"></div>
+          <div class="story-wrap col-span-2 row-span-3 mt-10 overflow-hidden"><img class="story-photo h-full w-full object-cover" src="https://images.unsplash.com/photo-1771308457742-a8a609a2fdde?auto=format&fit=crop&fm=jpg&q=82&w=800" alt="Chef trabajando en la cocina" width="800" height="900" loading="lazy"></div>
+          <div class="story-wrap col-span-2 row-span-3 overflow-hidden"><img class="story-photo h-full w-full object-cover" src="https://images.unsplash.com/photo-1758157835975-1cb4947750df?auto=format&fit=crop&fm=jpg&q=82&w=800" alt="Plato con carne, ensalada y papas" width="800" height="800" loading="lazy"></div>
+          <div class="col-span-3 row-span-2 flex items-center justify-center bg-charcoal p-7 text-center text-white"><p class="font-display text-3xl"><span class="text-gold">Producto.</span><br>Fuego. Tiempo.</p></div>
+        </div>
+      </div>
+      <div class="mx-auto mt-20 grid max-w-5xl grid-cols-3 divide-x divide-black/10 px-5 text-center reveal"><div><strong class="counter font-display text-5xl text-gold" data-target="12">0</strong><span class="mt-2 block text-[10px] uppercase tracking-widest text-black/55">años de historia*</span></div><div><strong class="counter font-display text-5xl text-gold" data-target="18">0</strong><span class="mt-2 block text-[10px] uppercase tracking-widest text-black/55">productores cercanos*</span></div><div><strong class="counter font-display text-5xl text-gold" data-target="46">0</strong><span class="mt-2 block text-[10px] uppercase tracking-widest text-black/55">platos creados*</span></div></div>
+      <p class="mt-5 text-center text-[10px] text-black/40">*Datos ilustrativos de esta marca ficticia.</p>
+    </section>
+
+    <section id="promos" class="bg-charcoal py-24 text-white">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><div class="reveal mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p class="mb-4 text-[11px] font-bold uppercase tracking-[.28em] text-gold">Momentos BRASA</p><h2 class="font-display text-5xl sm:text-6xl">Más motivos para volver.</h2></div><p class="max-w-md text-sm leading-6 text-white/60">Promociones pensadas para días comunes que merecen convertirse en un buen recuerdo.</p></div>
+        <div class="grid gap-px bg-white/10 md:grid-cols-3">
+          <article class="reveal bg-charcoal p-8 transition hover:bg-[#303030]"><span class="text-[10px] font-bold uppercase tracking-[.2em] text-gold">Martes y miércoles</span><h3 class="mt-5 font-display text-3xl">Noche de hamburguesas</h3><p class="mt-3 text-sm leading-6 text-white/60">Dos hamburguesas BRASA + papas rústicas por <strong class="text-white">$ 1.290</strong>.</p><button class="promo-add mt-7 text-xs font-bold uppercase tracking-widest text-gold" data-items="promo-burgers">Agregar promo →</button></article>
+          <article class="reveal bg-[#332f2a] p-8" data-delay="120"><span class="text-[10px] font-bold uppercase tracking-[.2em] text-gold">Mediodías</span><h3 class="mt-5 font-display text-3xl">Menú ejecutivo</h3><p class="mt-3 text-sm leading-6 text-white/60">Principal del día + bebida + café por <strong class="text-white">$ 890</strong>. De 12:00 a 15:30.</p><a href="#menu" class="mt-7 inline-block text-xs font-bold uppercase tracking-widest text-gold">Ver opciones →</a></article>
+          <article class="reveal bg-charcoal p-8 transition hover:bg-[#303030]" data-delay="240"><span class="text-[10px] font-bold uppercase tracking-[.2em] text-gold">Cumpleaños</span><h3 class="mt-5 font-display text-3xl">Brindis de la casa</h3><p class="mt-3 text-sm leading-6 text-white/60">Reservando para 6 o más, la primera botella de espumante va por nuestra cuenta.</p><a href="#reservas" class="mt-7 inline-block text-xs font-bold uppercase tracking-widest text-gold">Reservar mesa →</a></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="mx-auto mb-12 max-w-2xl text-center reveal"><p class="mb-4 text-[11px] font-bold uppercase tracking-[.28em] text-gold">Nuestra carta</p><h2 class="font-display text-5xl font-semibold sm:text-6xl">Elegí tu próximo favorito.</h2><p class="mt-5 text-sm leading-6 text-black/55">Agregá platos al carrito y completá tu pedido para retiro o delivery. Los precios están expresados en pesos uruguayos.</p></div>
+        <div class="mb-10 overflow-x-auto pb-3"><div id="tabs" class="mx-auto flex w-max min-w-full justify-start gap-7 border-b border-black/10 px-1 pb-3 md:justify-center" role="tablist" aria-label="Categorías del menú"><button class="tab-btn text-xs font-bold uppercase tracking-wider text-gold" role="tab" aria-selected="true" data-tab="chef">Chef recomienda</button><button class="tab-btn text-xs font-bold uppercase tracking-wider text-black/50" role="tab" aria-selected="false" data-tab="favoritos">Más vendidos</button><button class="tab-btn text-xs font-bold uppercase tracking-wider text-black/50" role="tab" aria-selected="false" data-tab="carta">Entradas y principales</button><button class="tab-btn text-xs font-bold uppercase tracking-wider text-black/50" role="tab" aria-selected="false" data-tab="bebidas">Bebidas</button><button class="tab-btn text-xs font-bold uppercase tracking-wider text-black/50" role="tab" aria-selected="false" data-tab="postres">Postres</button></div></div>
+        <div id="subfilters" class="mb-8 hidden justify-center gap-2"><button data-sub="todos" class="bg-ink px-4 py-2 text-xs font-semibold text-white">Todos</button><button data-sub="entradas" class="border border-black/15 px-4 py-2 text-xs font-semibold">Entradas</button><button data-sub="principales" class="border border-black/15 px-4 py-2 text-xs font-semibold">Principales</button></div>
+        <div id="menuGrid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" role="tabpanel" aria-live="polite"></div>
+        <div class="mt-12 border border-black/10 bg-white p-6 text-xs leading-6 text-black/55"><strong class="text-ink">Información importante:</strong> informanos si tenés alergias o restricciones alimentarias. La cocina manipula gluten, frutos secos y lácteos. Precios con impuestos incluidos. Imágenes ilustrativas. El costo y tiempo de delivery dependen de la zona.</div>
+      </div>
+    </section>
+
+    <section id="eventos" class="bg-[#eee8df] py-24">
+      <div class="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-2 lg:items-center lg:px-8">
+        <div class="relative reveal-left"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1300&q=82" alt="Mesa preparada para un evento privado" width="1300" height="900" loading="lazy" class="h-[520px] w-full object-cover"><div class="absolute -bottom-6 right-0 bg-ink p-6 text-white sm:-right-6"><span class="block font-display text-3xl text-gold">Hasta 60</span><span class="text-[10px] uppercase tracking-widest text-white/55">invitados</span></div></div>
+        <div class="reveal-right lg:pl-10"><p class="mb-4 text-[11px] font-bold uppercase tracking-[.28em] text-gold">Eventos & celebraciones</p><h2 class="font-display text-5xl font-semibold leading-none sm:text-6xl">Tu ocasión,<br>con nuestro fuego.</h2><p class="mt-7 max-w-xl text-[15px] leading-7 text-black/60">Cumpleaños, cenas de empresa, aniversarios o encuentros íntimos. Diseñamos un menú a medida, ambientación y una experiencia cuidada de principio a fin.</p><ul class="my-7 grid gap-3 text-sm sm:grid-cols-2"><li class="flex gap-3"><span class="text-gold">◆</span> Menús personalizados</li><li class="flex gap-3"><span class="text-gold">◆</span> Sector privado</li><li class="flex gap-3"><span class="text-gold">◆</span> Opciones vegetarianas</li><li class="flex gap-3"><span class="text-gold">◆</span> Música y ambientación</li></ul><button data-event-whatsapp class="btn-arrow inline-flex items-center gap-3 bg-ink px-7 py-4 text-xs font-bold uppercase tracking-[.14em] text-white transition hover:bg-gold">Consultar evento <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
+      </div>
+    </section>
+
+    <section id="reservas" class="py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><div class="mb-12 text-center reveal"><p class="mb-4 text-[11px] font-bold uppercase tracking-[.28em] text-gold">Reservas</p><h2 class="font-display text-5xl font-semibold sm:text-6xl">Tu mesa te espera.</h2><p class="mx-auto mt-4 max-w-xl text-sm leading-6 text-black/55">Elegí fecha y hora. Los turnos se ofrecen cada 30 minutos y guardamos tu mesa durante 15 minutos desde la hora reservada.</p></div>
+        <div class="grid overflow-hidden border border-black/10 bg-white shadow-soft lg:grid-cols-[1.18fr_.82fr]">
+          <div class="p-6 sm:p-10 lg:p-12">
+            <form id="reservationForm" novalidate>
+              <div class="grid gap-x-5 sm:grid-cols-2"><label class="block"><span class="mb-2 block text-xs font-bold uppercase tracking-wider">Nombre y apellido *</span><input id="resName" name="name" class="field" autocomplete="name" required placeholder="Ej. Sofía Pereira"><span class="error-text" data-error="name"></span></label><label class="block"><span class="mb-2 block text-xs font-bold uppercase tracking-wider">WhatsApp *</span><input id="resPhone" name="phone" class="field" autocomplete="tel" inputmode="tel" required placeholder="Ej. 099 123 456"><span class="error-text" data-error="phone"></span></label><label class="block"><span class="mb-2 block text-xs font-bold uppercase tracking-wider">Fecha *</span><input id="resDate" name="date" type="date" class="field" required><span class="error-text" data-error="date"></span></label><label class="block"><span class="mb-2 block text-xs font-bold uppercase tracking-wider">Hora *</span><select id="resTime" name="time" class="field" required><option value="">Primero elegí una fecha</option></select><span class="error-text" data-error="time"></span></label></div>
+              <div class="mt-1 grid gap-x-5 sm:grid-cols-2"><div><span class="mb-2 block text-xs font-bold uppercase tracking-wider">Personas *</span><div class="flex h-[52px] items-center justify-between border border-black/15 px-3"><button type="button" id="peopleMinus" class="grid h-9 w-9 place-items-center text-xl" aria-label="Quitar persona">−</button><output id="peopleOutput" class="font-semibold" aria-live="polite">2 personas</output><button type="button" id="peoplePlus" class="grid h-9 w-9 place-items-center text-xl" aria-label="Agregar persona">+</button></div><input type="hidden" id="resPeople" value="2"></div><label class="block"><span class="mb-2 block text-xs font-bold uppercase tracking-wider">Ocasión</span><select id="resOccasion" class="field"><option value="">Ninguna en especial</option><option>Cumpleaños</option><option>Aniversario</option><option>Reunión de trabajo</option><option>Otro</option></select></label></div>
+              <label class="mt-5 block"><span class="mb-2 block text-xs font-bold uppercase tracking-wider">Comentarios <span class="font-normal text-black/40">(opcional)</span></span><textarea id="resNotes" class="field min-h-24 resize-y" placeholder="Alergias, silla para bebé, preferencia de mesa…"></textarea></label>
+              <label class="mt-5 flex items-start gap-3 text-xs leading-5 text-black/60"><input id="resConsent" type="checkbox" class="mt-1 accent-[#B8976A]" required><span>Entiendo que mi mesa se mantiene durante 15 minutos y que la reserva se confirma al enviar el mensaje por WhatsApp.</span></label><span class="error-text block" data-error="consent"></span>
+              <button class="btn-arrow mt-7 flex w-full items-center justify-center gap-3 bg-gold px-6 py-4 text-sm font-bold uppercase tracking-[.14em] text-white transition hover:bg-ink" type="submit">Solicitar reserva por WhatsApp <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+            </form>
+            <div id="reservationSuccess" class="mt-6 hidden border border-green-200 bg-green-50 p-6" role="status"><strong class="font-display text-2xl text-green-900">Solicitud preparada.</strong><p id="reservationSummary" class="mt-2 text-sm leading-6 text-green-900/70"></p></div>
+          </div>
+          <aside class="bg-ink p-8 text-white sm:p-10 lg:p-12">
+            <p class="text-[10px] font-bold uppercase tracking-[.25em] text-gold">Encontranos</p><h3 class="mt-3 font-display text-4xl">BRASA</h3><div class="mt-7 space-y-5 text-sm text-white/65"><p><span class="mb-1 block text-[10px] uppercase tracking-widest text-gold">Dirección</span><span data-address>Rambla Sur 1842, Montevideo</span></p><p><span class="mb-1 block text-[10px] uppercase tracking-widest text-gold">Contacto</span><a data-phone-link class="hover:text-gold" href="#">+598 99 123 456</a><br><a data-email-link class="hover:text-gold" href="#">hola@brasa.demo</a></p></div>
+            <div class="my-8 h-px bg-white/10"></div><div class="flex items-center justify-between"><span class="text-xs font-bold uppercase tracking-wider">Horario de hoy</span><span id="openBadge" class="border border-white/20 px-3 py-1 text-[10px] uppercase tracking-wider">Calculando</span></div><p id="todayHours" class="mt-3 font-display text-2xl text-gold">—</p><a data-maps-link target="_blank" rel="noopener" class="mt-8 flex h-52 items-center justify-center overflow-hidden border border-white/10 bg-[#242424]" href="#" aria-label="Abrir ubicación en Google Maps"><svg viewBox="0 0 420 210" class="h-full w-full" role="img" aria-label="Mapa ilustrativo de la ubicación"><path d="M0 45 130 0l90 55L420 5M0 155l95-50 100 40 80-55 145 40M85 0l20 210M250 0l-20 210M355 0l-30 210" fill="none" stroke="#555" stroke-width="2"/><path d="M0 95h420M0 185h420" stroke="#444" stroke-width="10"/><circle cx="244" cy="100" r="26" fill="#B8976A" opacity=".2"/><path d="M244 70c-13 0-24 11-24 24 0 18 24 42 24 42s24-24 24-42c0-13-11-24-24-24Zm0 32a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" fill="#B8976A"/></svg></a><a data-maps-link target="_blank" rel="noopener" class="mt-4 inline-block text-xs font-bold uppercase tracking-widest text-gold" href="#">Cómo llegar en Google Maps →</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="bg-[#eee8df] py-24"><div class="mx-auto max-w-4xl px-5"><div class="mb-10 text-center reveal"><p class="mb-4 text-[11px] font-bold uppercase tracking-[.28em] text-gold">Preguntas frecuentes</p><h2 class="font-display text-5xl font-semibold">Antes de venir.</h2></div><div class="divide-y divide-black/15 border-y border-black/15 reveal">
+      <details class="group py-6"><summary class="flex cursor-pointer list-none items-center justify-between font-semibold">¿La reserva queda confirmada automáticamente?<span class="faq-plus text-2xl font-light text-gold transition">+</span></summary><p class="mt-3 max-w-3xl text-sm leading-6 text-black/60">La web prepara tu solicitud y abre WhatsApp. La reserva queda confirmada cuando el restaurante responde. En esta demo, la solicitud también queda guardada en este navegador.</p></details>
+      <details class="group py-6"><summary class="flex cursor-pointer list-none items-center justify-between font-semibold">¿Cuánto tiempo guardan la mesa?<span class="faq-plus text-2xl font-light text-gold transition">+</span></summary><p class="mt-3 max-w-3xl text-sm leading-6 text-black/60">Tenemos una tolerancia de 15 minutos desde la hora reservada. Después de llegar, disfrutá la mesa sin un límite de permanencia preestablecido.</p></details>
+      <details class="group py-6"><summary class="flex cursor-pointer list-none items-center justify-between font-semibold">¿Cómo funciona el delivery?<span class="faq-plus text-2xl font-light text-gold transition">+</span></summary><p class="mt-3 max-w-3xl text-sm leading-6 text-black/60">Armás el carrito, elegís delivery, ingresás tus datos y enviás el pedido por WhatsApp. El costo estimado es $ 120 y es gratis desde $ 1.800; el restaurante confirma zona y demora.</p></details>
+      <details class="group py-6"><summary class="flex cursor-pointer list-none items-center justify-between font-semibold">¿Tienen opciones vegetarianas y sin gluten?<span class="faq-plus text-2xl font-light text-gold transition">+</span></summary><p class="mt-3 max-w-3xl text-sm leading-6 text-black/60">Sí. Podés filtrar visualmente por etiquetas y avisarnos tus restricciones. No garantizamos ausencia de contaminación cruzada.</p></details>
+      <details class="group py-6"><summary class="flex cursor-pointer list-none items-center justify-between font-semibold">¿Puedo organizar un evento privado?<span class="faq-plus text-2xl font-light text-gold transition">+</span></summary><p class="mt-3 max-w-3xl text-sm leading-6 text-black/60">Sí, recibimos grupos de hasta 60 personas y armamos propuestas personalizadas de menú, bebidas y ambientación.</p></details>
+    </div></div></section>
+  </main>
+
+  <footer class="border-t border-gold/50 bg-ink py-16 text-white"><div class="mx-auto max-w-7xl px-5 lg:px-8"><div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4"><div><span class="font-display text-4xl tracking-widest">BRASA</span><p class="mt-4 max-w-xs text-sm leading-6 text-white/50">Cocina honesta, brasas encendidas y encuentros que se quedan.</p><div class="mt-6 flex gap-3"><a data-instagram-link href="#" aria-label="Instagram" class="grid h-10 w-10 place-items-center border border-white/15 transition hover:border-gold hover:text-gold">IG</a><a data-facebook-link href="#" aria-label="Facebook" class="grid h-10 w-10 place-items-center border border-white/15 transition hover:border-gold hover:text-gold">f</a><a data-whatsapp-link href="#" aria-label="WhatsApp" class="grid h-10 w-10 place-items-center border border-white/15 transition hover:border-gold hover:text-gold">WA</a></div></div><div><h3 class="text-xs font-bold uppercase tracking-widest text-gold">Navegación</h3><ul class="mt-5 space-y-3 text-sm text-white/55"><li><a href="#historia" class="hover:text-white">Historia</a></li><li><a href="#menu" class="hover:text-white">Menú</a></li><li><a href="#promos" class="hover:text-white">Promociones</a></li><li><a href="#eventos" class="hover:text-white">Eventos</a></li><li><a href="#reservas" class="hover:text-white">Reservas</a></li></ul></div><div><h3 class="text-xs font-bold uppercase tracking-widest text-gold">Horarios</h3><div class="mt-5 space-y-2 text-sm text-white/55"><p class="flex justify-between"><span>Lunes</span><span>Cerrado</span></p><p class="flex justify-between"><span>Mar–Dom</span><span>12:00–15:30</span></p><p class="flex justify-end"><span>20:00–00:00</span></p></div><button data-cart-open class="mt-6 border border-gold px-4 py-3 text-xs font-bold uppercase tracking-wider text-gold transition hover:bg-gold hover:text-white">Hacer un pedido</button></div><div><h3 class="text-xs font-bold uppercase tracking-widest text-gold">Novedades</h3><p class="mt-5 text-sm leading-6 text-white/50">Recibí menús especiales y fechas de eventos.</p><form id="newsletterForm" class="mt-4 flex"><label class="sr-only" for="newsletterEmail">Email</label><input id="newsletterEmail" type="email" required placeholder="tu@email.com" class="min-w-0 flex-1 border border-white/15 bg-transparent px-3 py-3 text-sm outline-none focus:border-gold"><button class="bg-gold px-4 font-bold" aria-label="Suscribirme">→</button></form></div></div><div class="mt-14 flex flex-col gap-4 border-t border-white/10 pt-7 text-[11px] text-white/35 sm:flex-row sm:items-center sm:justify-between"><p>© <span id="year"></span> BRASA. Marca y datos ficticios para demostración.</p><div class="flex gap-5"><a href="#" class="hover:text-white">Privacidad</a><a href="#" class="hover:text-white">Términos</a><a href="#inicio" class="text-gold">Volver arriba ↑</a></div></div></div></footer>
+
+  <button data-whatsapp-general class="pulse-soft fixed bottom-5 right-5 z-30 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-white shadow-xl" aria-label="Consultar por WhatsApp"><svg width="27" height="27" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.3 23.5l6-1.6A11.8 11.8 0 0 0 12 23.4h.1A11.8 11.8 0 0 0 20.5 3.5ZM12 21.4c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.8-.9-2-.9-.3-.1-.5-.1-.7.2-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1a8 8 0 0 1-2.4-1.5A8.8 8.8 0 0 1 9.2 11c-.2-.3 0-.4.1-.6l.4-.5.2-.5c.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.6-.5Z"/></svg></button>
+
+  <div id="cartOverlay" class="overlay fixed inset-0 z-[60] bg-black/60" aria-hidden="true"></div>
+  <aside id="cartDrawer" class="drawer fixed right-0 top-0 z-[70] flex h-full w-full max-w-lg flex-col bg-warm shadow-2xl" aria-label="Carrito de pedido" aria-hidden="true">
+    <div class="flex items-center justify-between border-b border-black/10 p-5 sm:p-6"><div><span class="text-[10px] font-bold uppercase tracking-[.22em] text-gold">Tu pedido</span><h2 class="font-display text-3xl">Carrito</h2></div><button id="cartClose" class="grid h-11 w-11 place-items-center border border-black/15 text-2xl" aria-label="Cerrar carrito">×</button></div>
+    <div class="flex-1 overflow-y-auto"><div id="cartEmpty" class="p-10 text-center"><span class="font-display text-6xl text-gold">B</span><h3 class="mt-4 font-display text-3xl">Tu carrito está vacío.</h3><p class="mt-2 text-sm text-black/50">Explorá la carta y elegí algo rico.</p><button id="browseMenu" class="mt-6 bg-ink px-6 py-3 text-xs font-bold uppercase tracking-wider text-white">Ver el menú</button></div><div id="cartFilled" class="hidden"><div id="cartItems" class="divide-y divide-black/10 px-5"></div><form id="orderForm" class="border-t border-black/10 p-5" novalidate><fieldset><legend class="mb-3 text-xs font-bold uppercase tracking-wider">¿Cómo lo recibís?</legend><div class="grid grid-cols-2 gap-2"><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="orderMode" value="pickup" checked><span class="block border border-black/15 p-3 text-center text-sm peer-checked:border-gold peer-checked:bg-[#f4eee7]">Retiro</span></label><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="orderMode" value="delivery"><span class="block border border-black/15 p-3 text-center text-sm peer-checked:border-gold peer-checked:bg-[#f4eee7]">Delivery</span></label></div></fieldset><div class="mt-5 grid gap-4 sm:grid-cols-2"><label><span class="mb-1 block text-[10px] font-bold uppercase tracking-wider">Nombre *</span><input id="orderName" class="field py-3" required autocomplete="name"></label><label><span class="mb-1 block text-[10px] font-bold uppercase tracking-wider">Teléfono *</span><input id="orderPhone" class="field py-3" required inputmode="tel" autocomplete="tel"></label></div><label id="addressField" class="mt-4 hidden"><span class="mb-1 block text-[10px] font-bold uppercase tracking-wider">Dirección completa *</span><input id="orderAddress" class="field py-3" autocomplete="street-address" placeholder="Calle, número, apto y barrio"></label><div class="mt-4 grid gap-4 sm:grid-cols-2"><label><span class="mb-1 block text-[10px] font-bold uppercase tracking-wider">Pago</span><select id="orderPayment" class="field py-3"><option>Transferencia</option><option>Efectivo</option><option>Tarjeta al retirar</option><option>POS en delivery</option></select></label><label><span class="mb-1 block text-[10px] font-bold uppercase tracking-wider">Hora</span><select id="orderTime" class="field py-3"><option>Lo antes posible</option><option>En 45 minutos</option><option>En 60 minutos</option><option>En 90 minutos</option></select></label></div><label class="mt-4 block"><span class="mb-1 block text-[10px] font-bold uppercase tracking-wider">Aclaraciones</span><textarea id="orderNotes" class="field min-h-20 py-3" placeholder="Sin cebolla, tocar timbre, etc."></textarea></label><p id="orderError" class="mt-3 hidden text-xs text-red-700" role="alert"></p></form></div></div>
+    <div id="cartTotals" class="hidden border-t border-black/10 bg-white p-5"><div class="space-y-2 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="subtotalValue">$ 0</strong></div><div class="flex justify-between"><span>Envío</span><strong id="shippingValue">—</strong></div><div class="flex justify-between border-t border-black/10 pt-3 font-display text-2xl"><span>Total</span><strong id="totalValue" class="text-gold">$ 0</strong></div></div><button id="orderSubmit" form="orderForm" class="mt-4 w-full bg-gold px-6 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-ink">Confirmar por WhatsApp</button><p class="mt-3 text-center text-[10px] leading-4 text-black/45">El restaurante confirmará disponibilidad, zona y tiempo final.</p></div>
+  </aside>
+
+  <div id="toast" class="toast fixed bottom-5 left-1/2 z-[90] w-[calc(100%-2rem)] max-w-md bg-ink px-5 py-4 text-center text-sm text-white shadow-2xl" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ============================================================
+       CONFIGURACIÓN EDITABLE DEL NEGOCIO
+       Cambiá aquí marca, contacto, costos, dirección y horarios.
+    ============================================================ */
+    const CONFIG = {
+      name: 'BRASA',
+      tagline: 'Cocina & Encuentro',
+      cuisine: 'Cocina contemporánea al fuego',
+      whatsapp: '59899123456',
+      whatsappDisplay: '+598 99 123 456',
+      instagram: '@brasa.mvd',
+      instagramUrl: 'https://instagram.com/',
+      facebookUrl: 'https://facebook.com/',
+      email: 'hola@brasa.demo',
+      address: 'Rambla Sur 1842, Montevideo',
+      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Rambla+Sur+1842+Montevideo',
+      currency: 'UYU',
+      minimumOrder: 600,
+      deliveryFee: 120,
+      freeDeliveryFrom: 1800,
+      toleranceMinutes: 15,
+      schedule: {
+        0: [['12:00','15:30'],['20:00','00:00']],
+        1: [],
+        2: [['12:00','15:30'],['20:00','00:00']],
+        3: [['12:00','15:30'],['20:00','00:00']],
+        4: [['12:00','15:30'],['20:00','00:00']],
+        5: [['12:00','15:30'],['20:00','00:00']],
+        6: [['12:00','15:30'],['20:00','00:00']]
+      }
+    };
+
+    const DISHES = [
+      {id:'promo-burgers',category:'promos',name:'Promo noche de burgers',description:'Dos hamburguesas BRASA con una porción de papas rústicas.',price:1290,image:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=82',portion:'Para compartir (2 pers.)',tags:['Promo'],chef:false,favorite:false},
+      {id:'provoleta',category:'entradas',name:'Provoleta al hierro',description:'Queso dorado, tomates confitados, orégano fresco y pan de masa madre.',price:490,image:'https://images.unsplash.com/photo-1572449043416-55f4685c9bb7?auto=format&fit=crop&w=900&q=80',portion:'Para compartir (2–3 pers.)',tags:['Sin gluten'],chef:true,favorite:true},
+      {id:'empanadas',category:'entradas',name:'Empanadas de asado',description:'Tres empanadas de cocción lenta, cebolla caramelizada y salsa criolla.',price:420,image:'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80',portion:'Para compartir (2–3 pers.)',tags:['Favorito'],chef:false,favorite:true},
+      {id:'croquetas',category:'entradas',name:'Croquetas de hongos',description:'Hongos asados, bechamel ahumada y alioli suave de hierbas.',price:460,image:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80',portion:'Para compartir (2–3 pers.)',tags:['Vegetariano'],chef:true,favorite:false},
+      {id:'burrata',category:'entradas',name:'Burrata de estación',description:'Burrata cremosa, duraznos asados, rúcula y vinagreta de miel.',price:620,image:'https://images.unsplash.com/photo-1625943555419-56a2cb596640?auto=format&fit=crop&w=900&q=80',portion:'Para compartir (2–3 pers.)',tags:['Vegetariano','Nuevo'],chef:true,favorite:false},
+      {id:'papas-brasa',category:'entradas',name:'Papas BRASA',description:'Papas rústicas crocantes, crema de ajo asado, verdeo y parmesano.',price:390,image:'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80',portion:'Para compartir (2–3 pers.)',tags:['Vegetariano'],chef:false,favorite:true},
+      {id:'ojo-bife',category:'principales',name:'Ojo de bife 350 g',description:'Corte seleccionado a las brasas, chimichurri y papas aplastadas.',price:1290,image:'https://images.unsplash.com/photo-1755811248279-1ab13b7d4384?auto=format&fit=crop&fm=jpg&q=82&w=1000',portion:'Individual',tags:['Sin gluten'],chef:true,favorite:true},
+      {id:'burger-brasa',category:'principales',name:'Burger BRASA',description:'Doble carne, cheddar, panceta crocante, cebolla ahumada y salsa de la casa.',price:790,image:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=82',portion:'Individual',tags:['Favorito'],chef:false,favorite:true},
+      {id:'burger-portobello',category:'principales',name:'Burger Portobello',description:'Portobello grillado, provolone, rúcula y mayonesa de hierbas.',price:690,image:'https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=1000&q=82',portion:'Individual',tags:['Vegetariano'],chef:false,favorite:false},
+      {id:'bondiola',category:'principales',name:'Bondiola braseada',description:'Ocho horas de cocción, puré rústico de boniato y jugo de cocción.',price:980,image:'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=82',portion:'Individual',tags:['Sin gluten'],chef:true,favorite:false},
+      {id:'pollo',category:'principales',name:'Pollo de campo',description:'Medio pollo deshuesado, limón quemado, manteca de hierbas y vegetales.',price:890,image:'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=1000&q=82',portion:'Individual',tags:['Sin gluten'],chef:false,favorite:false},
+      {id:'pasta',category:'principales',name:'Pappardelle del bosque',description:'Pasta fresca, ragú de hongos, crema ligera y queso estacionado.',price:840,image:'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1000&q=82',portion:'Individual',tags:['Vegetariano'],chef:false,favorite:true},
+      {id:'parrillada',category:'principales',name:'Parrillada BRASA',description:'Asado, vacío, chorizo, morcilla, vegetales y papas para compartir.',price:2490,image:'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1100&q=82',portion:'Para 4 personas',tags:['Sin gluten'],chef:true,favorite:true},
+      {id:'limonada',category:'bebidas',name:'Limonada de estación',description:'Limón, menta, jengibre y fruta fresca del día.',price:220,image:'https://images.unsplash.com/photo-1523677011781-c91d1bbe2f9d?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Sin alcohol'],chef:false,favorite:true},
+      {id:'gin',category:'bebidas',name:'Gin del jardín',description:'Gin artesanal, tónica, pepino, romero y pimienta rosa.',price:420,image:'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['De autor'],chef:true,favorite:false},
+      {id:'negroni',category:'bebidas',name:'Negroni ahumado',description:'Gin, vermut rosso, bitter y una nube aromática de canela.',price:460,image:'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['De autor'],chef:false,favorite:true},
+      {id:'vino-tinto',category:'bebidas',name:'Tannat de la casa',description:'Copa de Tannat uruguayo, frutos negros y final especiado.',price:310,image:'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Uruguay'],chef:false,favorite:false},
+      {id:'cerveza',category:'bebidas',name:'Cerveza artesanal',description:'Lager o IPA local bien fría, botella de 500 ml.',price:290,image:'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Local'],chef:false,favorite:false},
+      {id:'agua',category:'bebidas',name:'Agua mineral',description:'Con o sin gas, botella de 500 ml.',price:160,image:'https://images.unsplash.com/photo-1606168094336-48f205276929?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:[],chef:false,favorite:false},
+      {id:'volcan',category:'postres',name:'Volcán de chocolate',description:'Centro fundente, helado de crema y sal marina.',price:460,image:'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Favorito'],chef:true,favorite:true},
+      {id:'flan',category:'postres',name:'Flan de la casa',description:'Flan cremoso, dulce de leche y crema apenas batida.',price:370,image:'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Clásico'],chef:false,favorite:true},
+      {id:'cheesecake',category:'postres',name:'Cheesecake de frutos rojos',description:'Queso suave, base crocante y compota ácida de estación.',price:430,image:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Vegetariano'],chef:false,favorite:false},
+      {id:'pera',category:'postres',name:'Pera a las brasas',description:'Pera caramelizada, crema de mascarpone y almendras tostadas.',price:420,image:'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=80',portion:'Individual',tags:['Sin gluten','Nuevo'],chef:true,favorite:false}
+    ];
+
+    (() => {
+      'use strict';
+      const $ = (s, c=document) => c.querySelector(s);
+      const $$ = (s, c=document) => [...c.querySelectorAll(s)];
+      const money = n => new Intl.NumberFormat('es-UY',{style:'currency',currency:CONFIG.currency,maximumFractionDigits:0}).format(n);
+      const waUrl = text => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
+      let cart = JSON.parse(localStorage.getItem('brasaCart') || '[]');
+      let currentTab = 'chef', currentSub = 'todos', people = 2, toastTimer;
+
+      function toast(message){ const el=$('#toast'); el.textContent=message; el.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),3200); }
+      function openLink(url){ window.open(url,'_blank','noopener'); }
+      function persistCart(){ localStorage.setItem('brasaCart',JSON.stringify(cart)); updateCart(); }
+
+      function applyConfig(){
+        $$('[data-address]').forEach(el=>el.textContent=CONFIG.address);
+        $$('[data-phone-link]').forEach(el=>{el.textContent=CONFIG.whatsappDisplay;el.href=`tel:+${CONFIG.whatsapp}`});
+        $$('[data-email-link]').forEach(el=>{el.textContent=CONFIG.email;el.href=`mailto:${CONFIG.email}`});
+        $$('[data-maps-link]').forEach(el=>el.href=CONFIG.mapsUrl);
+        $$('[data-instagram-link]').forEach(el=>el.href=CONFIG.instagramUrl);
+        $$('[data-facebook-link]').forEach(el=>el.href=CONFIG.facebookUrl);
+        $$('[data-whatsapp-link]').forEach(el=>el.href=waUrl(`Hola ${CONFIG.name}, quisiera hacer una consulta.`));
+        $('#year').textContent=new Date().getFullYear();
+      }
+
+      function initNavbar(){
+        const nav=$('#navbar'), toggle=$('#menuToggle'), panel=$('#mobileMenu');
+        const update=()=>nav.classList.toggle('nav-solid',scrollY>40);
+        update(); addEventListener('scroll',update,{passive:true});
+        const close=()=>{panel.classList.add('translate-x-full');panel.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');document.body.classList.remove('locked')};
+        toggle.addEventListener('click',()=>{const opening=panel.classList.contains('translate-x-full');panel.classList.toggle('translate-x-full');panel.setAttribute('aria-hidden',String(!opening));toggle.setAttribute('aria-expanded',String(opening));document.body.classList.toggle('locked',opening)});
+        $$('.mobile-link').forEach(a=>a.addEventListener('click',close));
+        const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){$$('.nav-link').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===`#${e.target.id}`))}}),{rootMargin:'-35% 0px -60% 0px'});
+        $$('main section[id]').forEach(s=>observer.observe(s));
+      }
+
+      function initReveal(){
+        if(matchMedia('(prefers-reduced-motion: reduce)').matches){$$('.reveal,.reveal-left,.reveal-right').forEach(el=>el.classList.add('revealed'));return}
+        const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){const delay=Number(e.target.dataset.delay||0);setTimeout(()=>e.target.classList.add('revealed'),delay);io.unobserve(e.target)}}),{threshold:.12});
+        $$('.reveal,.reveal-left,.reveal-right').forEach(el=>io.observe(el));
+      }
+
+      function initCounters(){
+        const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,target=+el.dataset.target,start=performance.now();const tick=now=>{const p=Math.min(1,(now-start)/1200);el.textContent=Math.round(target*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);io.unobserve(el)}),{threshold:.5});
+        $$('.counter').forEach(el=>io.observe(el));
+      }
+
+      function filteredDishes(){
+        if(currentTab==='chef') return DISHES.filter(d=>d.chef);
+        if(currentTab==='favoritos') return DISHES.filter(d=>d.favorite);
+        if(currentTab==='carta') return DISHES.filter(d=>['entradas','principales'].includes(d.category)&&(currentSub==='todos'||d.category===currentSub));
+        return DISHES.filter(d=>d.category===currentTab);
+      }
+
+      function dishCard(d,i){
+        const peopleIcon=d.portion.includes('4')?'● ● ● ●':d.portion.includes('compartir')?'● ● ●':'●';
+        return `<article class="menu-card dish-enter overflow-hidden border border-black/10 bg-white" style="animation-delay:${i*55}ms"><div class="relative aspect-[4/3] overflow-hidden bg-stone-200"><img src="${d.image}" alt="${d.name}" width="900" height="675" loading="lazy" class="h-full w-full object-cover">${d.tags.length?`<div class="absolute left-3 top-3 flex flex-wrap gap-1">${d.tags.map(t=>`<span class="bg-warm/95 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-ink">${t}</span>`).join('')}</div>`:''}</div><div class="p-5"><div class="flex items-start justify-between gap-3"><h3 class="font-display text-2xl font-semibold leading-tight">${d.name}</h3><span class="whitespace-nowrap font-display text-2xl font-semibold text-gold">${money(d.price)}</span></div><p class="mt-3 min-h-[48px] text-sm leading-6 text-black/55">${d.description}</p><p class="mt-4 text-[10px] uppercase tracking-wider text-black/45"><span class="mr-2 text-gold">${peopleIcon}</span>${d.portion}</p><div class="mt-5 grid grid-cols-[1fr_auto] gap-2"><button class="add-dish bg-ink px-4 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-gold" data-id="${d.id}">Agregar al carrito</button><button class="ask-dish grid w-11 place-items-center border border-black/15 transition hover:border-gold hover:text-gold" data-id="${d.id}" aria-label="Consultar por WhatsApp sobre ${d.name}">WA</button></div></div></article>`;
+      }
+
+      function renderMenu(){ $('#menuGrid').innerHTML=filteredDishes().map(dishCard).join(''); }
+      function initTabs(){
+        const tabs=$$('#tabs [role=tab]');
+        tabs.forEach((tab,index)=>{tab.addEventListener('click',()=>activateTab(tab));tab.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();let n=e.key==='Home'?0:e.key==='End'?tabs.length-1:(index+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[n].focus();activateTab(tabs[n])})});
+        function activateTab(tab){currentTab=tab.dataset.tab;tabs.forEach(t=>{const active=t===tab;t.setAttribute('aria-selected',String(active));t.classList.toggle('text-gold',active);t.classList.toggle('text-black/50',!active)});$('#subfilters').classList.toggle('hidden',currentTab!=='carta');$('#subfilters').classList.toggle('flex',currentTab==='carta');renderMenu()}
+        $$('[data-sub]').forEach(btn=>btn.addEventListener('click',()=>{currentSub=btn.dataset.sub;$$('[data-sub]').forEach(b=>{const a=b===btn;b.classList.toggle('bg-ink',a);b.classList.toggle('text-white',a);b.classList.toggle('border',!a)});renderMenu()}));
+        $('#menuGrid').addEventListener('click',e=>{const add=e.target.closest('.add-dish'),ask=e.target.closest('.ask-dish');if(add)addToCart(add.dataset.id);if(ask){const d=DISHES.find(x=>x.id===ask.dataset.id);openLink(waUrl(`Hola ${CONFIG.name}, quisiera consultar por “${d.name}” (${money(d.price)}).`))}});
+      }
+
+      function addToCart(id){const item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});persistCart();toast('Agregado al carrito');}
+      function cartSummary(){return cart.reduce((sum,item)=>{const d=DISHES.find(x=>x.id===item.id);return sum+(d?d.price*item.qty:0)},0)}
+      function updateCart(){
+        cart=cart.filter(i=>DISHES.some(d=>d.id===i.id)&&i.qty>0);
+        const count=cart.reduce((s,i)=>s+i.qty,0), subtotal=cartSummary(), delivery=$('input[name=orderMode]:checked')?.value==='delivery';
+        $$('[data-cart-count]').forEach(el=>{el.textContent=count;el.classList.toggle('hidden',!count)});
+        $('#cartEmpty').classList.toggle('hidden',!!count);$('#cartFilled').classList.toggle('hidden',!count);$('#cartTotals').classList.toggle('hidden',!count);
+        $('#cartItems').innerHTML=cart.map(item=>{const d=DISHES.find(x=>x.id===item.id);return `<div class="flex gap-4 py-5"><img class="h-20 w-20 object-cover" src="${d.image}" alt="" width="80" height="80"><div class="min-w-0 flex-1"><div class="flex justify-between gap-3"><strong class="font-display text-lg leading-tight">${d.name}</strong><button class="cart-remove text-lg text-black/35" data-id="${d.id}" aria-label="Quitar ${d.name}">×</button></div><span class="text-sm text-gold">${money(d.price*item.qty)}</span><div class="mt-2 flex w-max items-center border border-black/15"><button class="cart-minus h-8 w-8" data-id="${d.id}" aria-label="Quitar uno">−</button><span class="w-8 text-center text-xs font-semibold">${item.qty}</span><button class="cart-plus h-8 w-8" data-id="${d.id}" aria-label="Agregar uno">+</button></div></div></div>`}).join('');
+        const fee=delivery&&subtotal<CONFIG.freeDeliveryFrom?CONFIG.deliveryFee:0,total=subtotal+fee;
+        $('#subtotalValue').textContent=money(subtotal);$('#shippingValue').textContent=delivery?(fee?money(fee):'Gratis'):'Retiro sin costo';$('#totalValue').textContent=money(total);
+      }
+
+      function initCart(){
+        const drawer=$('#cartDrawer'),overlay=$('#cartOverlay');
+        const open=()=>{drawer.classList.add('open');overlay.classList.add('open');drawer.setAttribute('aria-hidden','false');document.body.classList.add('locked');setTimeout(()=>$('#cartClose').focus(),100)};
+        const close=()=>{drawer.classList.remove('open');overlay.classList.remove('open');drawer.setAttribute('aria-hidden','true');document.body.classList.remove('locked')};
+        $$('[data-cart-open]').forEach(b=>b.addEventListener('click',open));$('#cartClose').addEventListener('click',close);overlay.addEventListener('click',close);addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+        $('#browseMenu').addEventListener('click',()=>{close();$('#menu').scrollIntoView()});
+        $('#cartItems').addEventListener('click',e=>{const btn=e.target.closest('button[data-id]');if(!btn)return;const item=cart.find(x=>x.id===btn.dataset.id);if(btn.classList.contains('cart-plus'))item.qty++;if(btn.classList.contains('cart-minus'))item.qty--;if(btn.classList.contains('cart-remove'))item.qty=0;persistCart()});
+        $$('input[name=orderMode]').forEach(r=>r.addEventListener('change',()=>{$('#addressField').classList.toggle('hidden',r.value!=='delivery'||!r.checked);updateCart()}));
+        $('#orderForm').addEventListener('submit',submitOrder);
+        updateCart();
+      }
+
+      function submitOrder(e){
+        e.preventDefault(); const name=$('#orderName').value.trim(),phone=$('#orderPhone').value.trim(),mode=$('input[name=orderMode]:checked').value,address=$('#orderAddress').value.trim(),subtotal=cartSummary(),error=$('#orderError');
+        let msg=''; if(!cart.length)msg='El carrito está vacío.';else if(subtotal<CONFIG.minimumOrder)msg=`El pedido mínimo es ${money(CONFIG.minimumOrder)}.`;else if(name.length<2)msg='Ingresá tu nombre.';else if(phone.replace(/\D/g,'').length<8)msg='Ingresá un teléfono válido.';else if(mode==='delivery'&&address.length<6)msg='Ingresá una dirección completa para el delivery.';
+        if(msg){error.textContent=msg;error.classList.remove('hidden');return} error.classList.add('hidden');
+        const fee=mode==='delivery'&&subtotal<CONFIG.freeDeliveryFrom?CONFIG.deliveryFee:0,total=subtotal+fee,code=`BR-${Date.now().toString().slice(-5)}`;
+        const lines=cart.map(i=>{const d=DISHES.find(x=>x.id===i.id);return `• ${i.qty} × ${d.name} — ${money(i.qty*d.price)}`}).join('\n');
+        const text=`Hola ${CONFIG.name}, quiero hacer este pedido:\n\n*Pedido ${code}*\n${lines}\n\nSubtotal: ${money(subtotal)}\nEnvío: ${mode==='delivery'?(fee?money(fee):'Gratis'):'Retiro'}\n*Total: ${money(total)}*\n\nModalidad: ${mode==='delivery'?'Delivery':'Retiro en el local'}${mode==='delivery'?`\nDirección: ${address}`:''}\nNombre: ${name}\nTeléfono: ${phone}\nPago: ${$('#orderPayment').value}\nHora: ${$('#orderTime').value}\nAclaraciones: ${$('#orderNotes').value.trim()||'Ninguna'}\n\n¿Me confirman disponibilidad y tiempo estimado?`;
+        const orders=JSON.parse(localStorage.getItem('brasaDemoOrders')||'[]');orders.unshift({code,date:new Date().toISOString(),name,mode,total});localStorage.setItem('brasaDemoOrders',JSON.stringify(orders.slice(0,20)));
+        openLink(waUrl(text));cart=[];persistCart();$('#orderForm').reset();$('#addressField').classList.add('hidden');toast(`Pedido ${code} preparado. Falta enviarlo en WhatsApp.`);
+      }
+
+      const parseMinutes=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
+      function scheduleText(day){const slots=CONFIG.schedule[day];return slots.length?slots.map(([a,b])=>`${a}–${b}`).join(' y '):'Cerrado'}
+      function isOpenNow(){const now=new Date(),day=now.getDay(),minutes=now.getHours()*60+now.getMinutes(),slots=CONFIG.schedule[day];return slots.some(([a,b])=>{const s=parseMinutes(a),end=b==='00:00'?1440:parseMinutes(b);return minutes>=s&&minutes<end})}
+      function updateOpenStatus(){const now=new Date(),open=isOpenNow(),text=open?'Abierto ahora':'Cerrado ahora';$('#heroStatus').textContent=text;$('#openBadge').textContent=text;$('#openBadge').classList.toggle('text-green-300',open);$('#openBadge').classList.toggle('text-red-300',!open);$('#todayHours').textContent=scheduleText(now.getDay())}
+      function localDateISO(date=new Date()){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');return `${y}-${m}-${d}`}
+      function formatDate(iso){return new Intl.DateTimeFormat('es-UY',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date(`${iso}T12:00:00`))}
+      function reservationSlots(iso){
+        if(!iso)return[];const date=new Date(`${iso}T12:00:00`),day=date.getDay(),today=iso===localDateISO(),now=new Date(),saved=JSON.parse(localStorage.getItem('brasaDemoReservations')||'[]');
+        return CONFIG.schedule[day].flatMap(([a,b])=>{let start=parseMinutes(a),end=b==='00:00'?1440:parseMinutes(b),arr=[];for(let v=start;v<end;v+=30){const hh=String(Math.floor(v/60)%24).padStart(2,'0'),mm=String(v%60).padStart(2,'0'),time=`${hh}:${mm}`;const past=today&&v<=now.getHours()*60+now.getMinutes()+30,busy=saved.some(r=>r.date===iso&&r.time===time);if(!past&&!busy)arr.push(time)}return arr});
+      }
+      function fillTimes(){const iso=$('#resDate').value,slots=reservationSlots(iso),select=$('#resTime');select.innerHTML=slots.length?`<option value="">Elegí una hora</option>${slots.map(t=>`<option>${t}</option>`).join('')}`:`<option value="">Sin horarios disponibles</option>`}
+      function initReservations(){
+        const date=$('#resDate');date.min=localDateISO();date.max=localDateISO(new Date(Date.now()+1000*60*60*24*90));date.addEventListener('change',fillTimes);
+        $('#peopleMinus').addEventListener('click',()=>{people=Math.max(1,people-1);updatePeople()});$('#peoplePlus').addEventListener('click',()=>{people=Math.min(12,people+1);updatePeople()});
+        function updatePeople(){$('#resPeople').value=people;$('#peopleOutput').textContent=`${people} ${people===1?'persona':'personas'}`}
+        $('#reservationForm').addEventListener('submit',e=>{e.preventDefault();$$('.error-text').forEach(x=>x.textContent='');$$('#reservationForm .field').forEach(x=>x.classList.remove('error'));const values={name:$('#resName').value.trim(),phone:$('#resPhone').value.trim(),date:date.value,time:$('#resTime').value,occasion:$('#resOccasion').value,notes:$('#resNotes').value.trim()};let valid=true;const fail=(key,text)=>{const el=$(`[data-error=${key}]`);if(el)el.textContent=text;const field=$(`[name=${key}]`);if(field)field.classList.add('error');valid=false};if(values.name.length<2)fail('name','Ingresá tu nombre.');if(values.phone.replace(/\D/g,'').length<8)fail('phone','Ingresá un teléfono válido.');if(!values.date)fail('date','Elegí una fecha.');if(!values.time)fail('time','Elegí un horario.');if(!$('#resConsent').checked)fail('consent','Necesitamos que aceptes esta condición.');if(!valid)return;
+          const code=`RS-${Date.now().toString().slice(-5)}`,reservation={...values,people,code,createdAt:new Date().toISOString()};const list=JSON.parse(localStorage.getItem('brasaDemoReservations')||'[]');list.push(reservation);localStorage.setItem('brasaDemoReservations',JSON.stringify(list));
+          const text=`Hola ${CONFIG.name}, quiero solicitar una reserva:\n\n*Reserva ${code}*\nNombre: ${values.name}\nFecha: ${formatDate(values.date)}\nHora: ${values.time}\nPersonas: ${people}\nTeléfono: ${values.phone}\nOcasión: ${values.occasion||'Ninguna'}\nComentarios: ${values.notes||'Ninguno'}\n\nEntiendo que la mesa se mantiene ${CONFIG.toleranceMinutes} minutos. ¿Me confirman disponibilidad?`;
+          $('#reservationSummary').textContent=`${values.name}: ${formatDate(values.date)} a las ${values.time}, para ${people}. Código ${code}. La confirmación final se realiza por WhatsApp.`;$('#reservationSuccess').classList.remove('hidden');openLink(waUrl(text));fillTimes();toast('Solicitud guardada en esta demo y preparada en WhatsApp.');
+        });
+      }
+
+      function initExtras(){
+        $$('[data-whatsapp-general]').forEach(b=>b.addEventListener('click',()=>openLink(waUrl(`Hola ${CONFIG.name}, quisiera hacer una consulta.`))));
+        $$('[data-event-whatsapp]').forEach(b=>b.addEventListener('click',()=>openLink(waUrl(`Hola ${CONFIG.name}, quisiera consultar por un evento privado.`))));
+        $$('.promo-add').forEach(b=>b.addEventListener('click',()=>{b.dataset.items.split(',').forEach(addToCart);toast('Promo agregada. Revisá cantidades y total en el carrito.')}));
+        $('#newsletterForm').addEventListener('submit',e=>{e.preventDefault();toast('¡Gracias! Suscripción simulada para esta demostración.');e.target.reset()});
+      }
+
+      applyConfig();initNavbar();initReveal();initCounters();renderMenu();initTabs();initCart();initReservations();updateOpenStatus();initExtras();setInterval(updateOpenStatus,60000);
+    })();
+  </script>
+</body>
+</html>
